@@ -194,7 +194,11 @@ function getCatalog_() {
 
 // ---------- Hojas visibles ----------
 
-function renderCrono_() {
+// La hoja es una tabla de Google con columnas tipadas: si algo no encaja, la app sigue guardando igual.
+function renderCrono_() { try { renderCronoImpl_(); } catch (e) { console.error('Cronograma Final: ' + e); } }
+function renderNecesarios_() { try { renderNecesariosImpl_(); } catch (e) { console.error('Necesarios: ' + e); } }
+
+function renderCronoImpl_() {
   const s = ss_().getSheetByName('Cronograma Final');
   if (!s) return;
   const names = {};
@@ -212,23 +216,23 @@ function renderCrono_() {
   });
   readRows_('extras').forEach(function (x) {
     if (!x.dia) return;
-    (byDay[x.dia] = byDay[x.dia] || []).push({ orden: Number(x.orden) || 0, row: [x.titulo, '', 'Plan', PEOPLE.join(', '), x.nota] });
+    (byDay[x.dia] = byDay[x.dia] || []).push({ orden: Number(x.orden) || 0, row: [x.titulo, '', '', PEOPLE.join(', '), x.nota] });
   });
   const out = [];
   days_().forEach(function (d) {
     const list = (byDay[d] || []).sort(function (a, b) { return a.orden - b.orden; });
-    const f = fmtDay_(d);
+    const p = d.split('-').map(Number);
+    const f = new Date(p[0], p[1] - 1, p[2]);
     if (!list.length) out.push([f, '', '', '', '', '', '']);
     list.forEach(function (it) { out.push([f, '', it.row[0], it.row[1], it.row[2], it.row[3], it.row[4]]); });
   });
   const last = Math.max(s.getLastRow(), 2);
   s.getRange(2, 1, last, 7).clearContent();
   s.getRange(1, 1, 1, 7).setValues([['Fecha de inicio', 'Fecha de finalización', 'Actividad', 'Ubicación', 'Categoría', 'Personas', 'Notas']]);
-  s.getRange(2, 1, out.length, 1).setNumberFormat('@');
   s.getRange(2, 1, out.length, 7).setValues(out);
 }
 
-function renderNecesarios_() {
+function renderNecesariosImpl_() {
   const s = ss_().getSheetByName('Necesarios');
   if (!s) return;
   const rows = readRows_('necesarios').sort(function (a, b) { return (Number(a.orden) || 0) - (Number(b.orden) || 0); });
@@ -400,7 +404,7 @@ function str_(v, max) {
 }
 
 function slug_(s) {
-  return String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+  return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 90);
 }
 
