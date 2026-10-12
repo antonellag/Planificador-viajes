@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Córdoba 2026</title>
+  <meta name="description" content="Planificador del viaje a Córdoba de Javi, Bel, Facu y Anto: votamos lugares, armamos el cronograma y anotamos gastos.">
+  <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121413" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232d6a4f'/%3E%3Cpath d='M4 24l8-11 5 6 4-4 7 9z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Geist:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="top-in">
+      <div class="brand">
+        <h1>Córdoba 2026</h1>
+        <p class="dates">25 dic → 7 ene · <span id="countdown"></span></p>
+      </div>
+      <div class="top-actions">
+        <button class="btn ghost sm" id="btn-invite" type="button" aria-label="Invitar al grupo">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v13"/></svg>
+          <span>Invitar</span>
+        </button>
+        <button class="me-chip" id="btn-me" type="button" aria-label="Cambiar quién sos"></button>
+      </div>
+    </div>
+    <nav class="tabs" aria-label="Secciones">
+      <a href="#cronograma" data-tab="cronograma"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Cronograma</span></a>
+      <a href="#explorar" data-tab="explorar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span>Explorar</span></a>
+      <a href="#mapa" data-tab="mapa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Espera y mapa</span><b class="badge" id="badge-espera" hidden></b></a>
+      <a href="#gastos" data-tab="gastos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2"/></svg><span>Gastos</span></a>
+      <a href="#necesarios" data-tab="necesarios"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg><span>Necesarios</span></a>
+    </nav>
+  </header>
+
+  <main id="view" tabindex="-1">
+    <div class="loading">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Cargando el viaje…</p>
+    </div>
+  </main>
+
+  <div class="sheet-wrap" id="sheet" hidden>
+    <div class="sheet-backdrop" data-act="close"></div>
+    <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+      <div class="sheet-body" id="sheet-body"></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="config.js"></script>
+  <script src="enrich.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
