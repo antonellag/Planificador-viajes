@@ -197,6 +197,7 @@
   function renderSync() {
     const el = $("#sync");
     if (!el) return;
+    if (DEMO) { el.className = "sync off"; el.innerHTML = "<i></i>Vista previa: todavía sin planilla"; return; }
     el.className = "sync" + (online ? "" : " off");
     el.innerHTML = "<i></i>" + (online ? "Sincronizado con la planilla" : "Sin conexión, mostrando lo último");
   }
