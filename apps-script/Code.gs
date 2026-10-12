@@ -211,12 +211,13 @@ function renderCronoImpl_() {
     if (e.estado !== 'confirmado' || !e.dia || !names[e.id]) return;
     (byDay[e.dia] = byDay[e.dia] || []).push({
       orden: Number(e.orden) || 0,
-      row: [names[e.id].name, names[e.id].zone || '', 'Actividad', (votes[e.id] || []).join(', '), e.nota || names[e.id].time || '']
+      row: [names[e.id].name, names[e.id].zone || '', 'Excursión', (votes[e.id] || []).join(', '), e.nota || names[e.id].time || '']
     });
   });
   readRows_('extras').forEach(function (x) {
     if (!x.dia) return;
-    (byDay[x.dia] = byDay[x.dia] || []).push({ orden: Number(x.orden) || 0, row: [x.titulo, '', '', PEOPLE.join(', '), x.nota] });
+    const cat = x.id === 'x-llegada' ? 'Llegada' : x.id === 'x-aloja' ? 'Alojamiento' : x.id === 'x-vuelta' ? 'Vuelta' : 'Tiempo libre';
+    (byDay[x.dia] = byDay[x.dia] || []).push({ orden: Number(x.orden) || 0, row: [x.titulo, '', cat, PEOPLE.join(', '), x.nota] });
   });
   const out = [];
   days_().forEach(function (d) {
@@ -228,7 +229,6 @@ function renderCronoImpl_() {
   });
   const last = Math.max(s.getLastRow(), 2);
   s.getRange(2, 1, last, 7).clearContent();
-  s.getRange(1, 1, 1, 7).setValues([['Fecha de inicio', 'Fecha de finalización', 'Actividad', 'Ubicación', 'Categoría', 'Personas', 'Notas']]);
   s.getRange(2, 1, out.length, 7).setValues(out);
 }
 
@@ -304,7 +304,10 @@ function deleteGasto_(id) {
 
 // ---------- Hojas ocultas app_* ----------
 
-function ss_() { return SpreadsheetApp.getActiveSpreadsheet(); }
+// Planilla del viaje (por ID, así funciona aunque el proyecto no esté atado a la planilla)
+const SHEET_ID = '1AytYWHh9TWcpQ7aGsot5cXYEHtsbOu-qM-ozHe2xva0';
+let SS_ = null;
+function ss_() { return SS_ || (SS_ = SpreadsheetApp.openById(SHEET_ID)); }
 
 function sh_(name) {
   const n = 'app_' + name;

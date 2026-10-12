@@ -1,7 +1,7 @@
 /* Configuración del viaje. Lo único que hay que tocar es API_URL. */
 window.TRIP = {
   // URL de la aplicación web de Apps Script (termina en /exec)
-  API_URL: "",
+  API_URL: "https://script.google.com/macros/s/AKfycbydBLTXJk4HgE3BARWy8PKOz1vGmihOhw_kbyCwJmlaIpobs-aPdUoPg61QXyL3i0T0jA/exec",
   NAME: "Córdoba 2026",
   PEOPLE: ["Javi", "Bel", "Facu", "Anto"],
   OWNER: "Anto",
