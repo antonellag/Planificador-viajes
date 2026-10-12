@@ -16,6 +16,7 @@
   let sheetMode = null;    // "detail" | "who" | "add" | "invite"
   let map = null, mapState = null, addMap = null;
   let online = true;
+  const DEMO = !C.API_URL; // vista previa sin planilla: los cambios no se guardan
   const ui = { zone: "Todas", q: "", filter: "todas", mood: "", showAll: false };
   const commonsCache = {};
 
@@ -118,7 +119,7 @@
   let pending = 0;
 
   async function load() {
-    if (!C.API_URL) { renderSetup(); return; }
+    if (DEMO) { if (!S) { S = demoState(); lastSig = "demo"; render(); } return; }
     try {
       const r = await fetch(C.API_URL + "?action=state", { cache: "no-store" });
       const data = await r.json();
@@ -133,6 +134,7 @@
   }
 
   function api(body) {
+    if (DEMO) { render(); return Promise.resolve(); }
     body.persona = ME;
     pending++;
     queue = queue.then(async () => {
@@ -183,6 +185,7 @@
     else if (view === "gastos") renderGastos();
     else if (view === "necesarios") renderNecesarios();
     else renderCronograma();
+    if (DEMO) viewEl.insertAdjacentHTML("afterbegin", '<div class="notice" style="border-color:var(--wait);background:var(--wait-soft)"><p class="eyebrow" style="color:var(--wait)">Vista previa</p><p style="margin:0">Así se ve la app con el catálogo real. Todavía no está conectada a la planilla, así que lo que toques acá no se guarda.</p></div>');
     window.scrollTo(0, keepScroll);
     if (sheetMode === "detail" && openId) {
       const active = document.activeElement;
@@ -215,6 +218,21 @@
     const start = new Date("2026-12-25T00:00:00-03:00");
     const days = Math.ceil((start - new Date()) / 86400000);
     $("#countdown").textContent = days > 1 ? "faltan " + days + " días" : days === 1 ? "¡mañana!" : days > -14 ? "¡estamos de viaje!" : "viaje terminado";
+  }
+
+  function demoState() {
+    const Z = window.ENRICH_ZONES || {};
+    const catalog = [];
+    Object.keys(Z).forEach(z => Z[z].forEach(n => catalog.push({ id: norm(z + " " + n).replace(/ /g, "-"), name: n, zone: z, sub: "", time: "", diff: "", price: "", detail: "" })));
+    const days = [];
+    for (let t = Date.UTC(2026, 11, 25); t <= Date.UTC(2027, 0, 7); t += 86400000) days.push(new Date(t).toISOString().slice(0, 10));
+    const need = (id, cat, item, o) => { const n = { id, categoria: cat, item, listo: "", orden: o }; PEOPLE.forEach(p => { n[p] = ""; }); return n; };
+    return {
+      people: PEOPLE, days, catalog, tips: {}, lugares: [], votes: {}, estado: {}, media: {}, gastos: [],
+      necesarios: [need("n1", "Cuidado corporal", "Protector", 1), need("n2", "Cuidado corporal", "Gorra", 2), need("n3", "Para acampar", "Termo mate", 3), need("n4", "Documentos / basicos", "DNI", 4)],
+      extras: [{ id: "x1", dia: "2026-12-25", titulo: "Llegada al aeropuerto", nota: "Viaje", orden: 0 }, { id: "x2", dia: "2026-12-25", titulo: "Check-in en el alojamiento", nota: "Comida, caminata y descanso", orden: 1 }, { id: "x3", dia: "2027-01-07", titulo: "Vuelta", nota: "", orden: 9 }],
+      propuesta: null, ts: 0
+    };
   }
 
   function renderSetup() {
