@@ -326,7 +326,7 @@ details.fold[open] > summary::before { transform: rotate(90deg); }
 .who .av[data-on="0"] { background: transparent; color: var(--muted); box-shadow: inset 0 0 0 1.5px var(--line); }
 @media (max-width: 420px) {
   .need-row { grid-template-columns: auto 1fr auto; }
-  .need-row .who { grid-column: 2 / 4; }
+  .need-row .who { grid-column: 2 / 3; grid-row: 2; }
 }
 
 /* ---------- Hoja de detalle (modal) ---------- */
